@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_project_purchase" name="Compras" parent="project.menu_main_pm" sequence="5" groups="project.group_project_manager"/>
+    </data>
+</odoo>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_project_work_report_tree" model="ir.ui.view">
+            <field name="name">project.work.report.tree</field>
+            <field name="model">project.work.report</field>
+            <field name="arch" type="xml">
+                <tree string="Reporte de Proyecto">
+                    <field name="name" string="Código"/>
+                    <field name="fecha"/>
+                    <field name="camino_id"/>
+                    <field name="proyecto_id"/>
+                    <field name="analytic_tag_ids" widget="many2many_tags" />
+                    <field name="orden_purchase_id"/>
+                    <field name="recurso_id"/>
+                    <field name="identificacion_equipo"/>
+                    <field name="cantidad_disponible"/>
+                    <field name="cantidad_reportar"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="costo_recurso" sum="TOTAL RECURSO" decoration-bf="1"/>
+                    <field name="costo_total" sum="TOTAL COSTO" decoration-bf="1"/>
+                    <field name="state" widget="badge" decoration-success="state == 'validate'" decoration-info="state == 'draft'" />
+                </tree>
+            </field>
+        </record>
+        <record id="view_project_work_report_form" model="ir.ui.view">
+            <field name="name">project.work.report.form</field>
+            <field name="model">project.work.report</field>
+            <field name="arch" type="xml">
+                  <form string="Reporte de Trabajo ">
+                      <header>
+                          <button name="validate" string="Validar" class="oe_highlight"
+                                  attrs="{'invisible': [('state', '=', 'validate')]}"
+                                  type="object" confirm="Estimado Usuario: ¿ Está seguro de validar este proceso ?"/>
+                          <field name="state" widget="statusbar" statusbar_visible="draft,validate"/>
+
+                      </header>
+                       <sheet>
+                           <div class="oe_title">
+                                <h1>
+                                    <field name="name" readonly="1" string="Código"/>
+                                </h1>
+                            </div>
+                           <group>
+                              <group>
+                                  <field name="fecha" placeholder="dia/mes/año"/>
+                                  <field name="camino_id" placeholder="**Seleccione camino"  options="{'no_create': True}"/>
+                                  <field name="distrito_id" options="{'no_create': True}" />
+                                  <field name="proyecto_id" domain="[('camino_id','=',camino_id)]" placeholder="**Seleccione proyecto"  options="{'no_create': True}"/>
+                                  <field name="analytic_tag_ids" placeholder="**Seleccione departamento" widget="many2many_tags" options="{'no_create': True}"/>
+                                  <field name="departamento" invisible="1"/>
+<!--                                  <field name="orden_purchase_id" domain="['|','&amp;',('analytic_tag_ids','=',analytic_tag_ids),('project_id','=',proyecto_id),('state','=','purchase')]"-->
+<!--                                         placeholder="**Seleccione orden de compra"/> -->
+                                  <field name="orden_purchase_id" attrs="{'readonly': [('analytic_tag_ids','=',False)]}"
+                                         placeholder="**Seleccione orden de compra" options="{'no_create': True}"
+                                        domain="['&amp;',('analytic_tag_ids','=',analytic_tag_ids),('state','=','purchase')]"/>
+                                  <field name="order_line_id" domain="[('order_id','=',orden_purchase_id)]"/>
+                                  <field name="recurso_id" placeholder="**Seleccione recurso o producto"  options="{'no_create': True}"/>
+                                  <field name="identificacion_equipo" placeholder="**Ingrese identificación"/>
+                              </group>
+                              <group>
+                                  <field name="company_id" invisible="1"/>
+                                  <field name="currency_id" invisible="1"/>
+                                  <field name="cantidad_disponible"/>
+                                  <field name="cantidad_reportar" />
+                                  <field name="costo_recurso" />
+                                  <field name="costo_total" />
+                                  <field name="show_msn" invisible="1"/>
+                              </group>
+
+                          </group>
+                           <group>
+                                <div class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                                     attrs="{'invisible': [('show_msn','in',(0,1))]}">
+                                    Nota:
+                                    <bold>
+                                        <a class="alert-link" role="button">No existen órdenes de compra asociadas al proyecto y/o departamento seleccionado :(
+                                        </a>
+                                    </bold>
+                                </div>
+                           </group>
+                       </sheet>
+                       <div class="oe_chatter">
+                            <field name="message_follower_ids"/>
+                            <field name="activity_ids"/>
+                            <field name="message_ids"/>
+                        </div>
+                  </form>
+            </field>
+        </record>
+
+          <record model="ir.ui.view" id="view_project_work_report_graph">
+            <field name="name">project.work.report.graph</field>
+            <field name="model">project.work.report</field>
+            <field name="arch" type="xml">
+                <graph string="Gráfico Reporte de Trabajo" sample="1">
+                    <field name="departamento" type="row" string="Departamento"/>
+                    <field name="cantidad_reportar"  type="measure" string="Cantidad a reportar"/>
+                    <field name="costo_recurso" type="measure" string="Costo recurso"/>
+                    <field name="costo_total" type="measure" string="Costo total"/>
+                </graph>
+            </field>
+        </record>
+
+         <record model="ir.ui.view" id="view_project_work_report_pivot">
+            <field name="name">project.work.report.pivot</field>
+            <field name="model">project.work.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Reporte de Trabajo" sample="1">
+                    <field name="departamento" type="row" string="Departamento"/>
+                    <field name="proyecto_id" type="row" string="Proyecto"/>
+                    <field name="orden_purchase_id" type="row"/>
+                    <field name="fecha" interval="month" type="col"/>
+                    <field name="camino_id"/>
+                    <field name="cantidad_disponible" type="measure"/>
+                    <field name="cantidad_reportar" type="measure"/>
+                    <field name="costo_recurso" type="measure"/>
+                    <field name="costo_total" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+         <record id="action_project_work_report" model="ir.actions.act_window">
+            <field name="name">Reporte de Trabajo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project.work.report</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="view_id" ref="view_project_work_report_tree"/>
+            <field name="help" type="html">
+                <p></p>
+            </field>
+        </record>
+
+         <menuitem id="menu_project_work_report"
+            name="Reporte de Trabajo"
+            action="action_project_work_report"
+            parent="project.menu_project_report"
+            sequence="12"/>
+
+
+
+    </data>
+</odoo>

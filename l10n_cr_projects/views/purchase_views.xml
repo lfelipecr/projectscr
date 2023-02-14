@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="purchase_order_project_form" model="ir.ui.view">
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <field name="currency_id" position="after">
+                <field name="project_id" placeholder="**Seleccione un proyecto"/>
+                <field name="analytic_tag_ids" widget="many2many_tags"/>
+            </field>
+            <xpath expr="//field[@name='partner_ref']" position="attributes">
+                <attribute name="string">SICOP</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="purchase_order_project_view_tree" model="ir.ui.view">
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="project_id"/>
+                <field name="analytic_tag_ids" widget="many2many_tags" />
+            </field>
+            <xpath expr="//field[@name='partner_ref']" position="attributes">
+                <attribute name="string">SICOP</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <!--ACCESO A COMPRAS DESDE PROYECTOS-->
+
+     <record id="action_purchase_order_for_projetcs" model="ir.actions.act_window">
+            <field name="name">Compras</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="purchase.purchase_order_view_tree"/>
+            <field name="help" type="html">
+                <p></p>
+            </field>
+     </record>
+
+     <menuitem action="action_purchase_order_for_projetcs" id="menu_project_purchase_order"
+            parent="l10n_cr_projects.menu_project_purchase" sequence="1"/>
+
+
+   <record id="action_product_for_projetcs" model="ir.actions.act_window">
+        <field name="name">Productos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="product.product_template_kanban_view"/>
+        <field name="search_view_id" ref="product.product_template_search_view"/>
+        <field name="context">{"search_default_filter_to_purchase":1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new product
+            </p><p>
+                You must define a product for everything you sell or purchase,
+                whether it's a storable product, a consumable or a service.
+            </p>
+        </field>
+    </record>
+
+     <menuitem action="action_product_for_projetcs" id="menu_project_products"
+            parent="l10n_cr_projects.menu_project_purchase" sequence="2"/>
+
+
+</odoo>

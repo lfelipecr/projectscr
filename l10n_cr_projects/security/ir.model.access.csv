@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stock_project_camino,project.camino,model_project_camino,base.group_user,1,1,1,1
+access_project_work_report,project.work.report,model_project_work_report,base.group_user,1,1,1,1
+access_purchase_tag,purchase.tag,model_purchase_tag,base.group_user,1,1,1,1
+
+
